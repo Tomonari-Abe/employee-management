@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import com.example.employeemanagement.dto.EmployeeForm;
+import com.example.employeemanagement.entity.Department;
+
 
 @Controller
 @RequestMapping("/employees")
@@ -69,6 +71,11 @@ public class EmployeeController {
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("employeeForm", new EmployeeForm());
+
+        // ★追加ここ
+        List<Department> departments = departmentRepository.findAll();
+        model.addAttribute("departments", departments);
+
         return "employee/create";
-    }
+}
 }

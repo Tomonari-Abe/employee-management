@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Optional;
 import com.example.employeemanagement.dto.EmployeeForm;
 import com.example.employeemanagement.entity.Department;
+import com.example.employeemanagement.dto.EmployeeConfirmView;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
 
 
 @Controller
@@ -77,5 +81,27 @@ public class EmployeeController {
         model.addAttribute("departments", departments);
 
         return "employee/create";
-}
+    }
+    @PostMapping("/confirm")
+    public String confirmCreate(@ModelAttribute EmployeeForm employeeForm, Model model) {
+        EmployeeConfirmView confirmView = new EmployeeConfirmView();
+        confirmView.setLastName(employeeForm.getLastName());
+        confirmView.setFirstName(employeeForm.getFirstName());
+        confirmView.setBirthDate(employeeForm.getBirthDate());
+        confirmView.setHireDate(employeeForm.getHireDate());
+        confirmView.setDepartmentId(employeeForm.getDepartmentId());
+
+        String departmentName = "";
+        if (employeeForm.getDepartmentId() != null) {
+            Optional<Department> departmentOpt = departmentRepository.findById(employeeForm.getDepartmentId());
+            if (departmentOpt.isPresent()) {
+                departmentName = departmentOpt.get().getDepartmentName();
+            }
+        }
+    confirmView.setDepartmentName(departmentName);
+
+    model.addAttribute("confirmView", confirmView);
+
+    return "employee/confirm";
+    }
 }

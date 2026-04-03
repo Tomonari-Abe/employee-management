@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>社員一覧</title>
+    <style>
+        body {
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>社員一覧画面</h1>
+
+    <button>登録</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>姓</th>
+                <th>名</th>
+                <th>生年月日</th>
+                <th>入社日</th>
+                <th>所属部門</th>
+                <th>退社日</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+    <tr th:each="employee : ${employees}">
+        <td th:text="${employee.lastName}">姓</td>
+        <td th:text="${employee.firstName}">名</td>
+        <td th:text="${employee.birthDate}">生年月日</td>
+        <td th:text="${employee.hireDate}">入社日</td>
+        <td th:text="${employee.departmentName}">所属部門</td>
+        <td th:text="${employee.retirementDate != null ? employee.retirementDate : '-'}">退社日</td>
+        <td><button>編集</button></td>
+    </tr>
+</tbody>
+    </table>
+
+    <div style="margin-top: 10px;">
+        <button>前へ</button>
+        <button>次へ</button>
+    </div>
+</body>
+</html>

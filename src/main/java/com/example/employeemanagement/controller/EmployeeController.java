@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import com.example.employeemanagement.dto.EmployeeForm;
 
 @Controller
 @RequestMapping("/employees")
@@ -64,5 +65,10 @@ public class EmployeeController {
 
         model.addAttribute("employees", employeeList);
         return "employee/list";
+    }
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("employeeForm", new EmployeeForm());
+        return "employee/create";
     }
 }

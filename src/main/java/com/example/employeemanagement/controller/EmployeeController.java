@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,9 @@ import com.example.employeemanagement.entity.Department;
 import com.example.employeemanagement.dto.EmployeeConfirmView;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import java.time.LocalDateTime;
+import com.example.employeemanagement.entity.Employee;
+import com.example.employeemanagement.entity.EmployeeDepartmentHistory;
 
 
 
@@ -103,5 +107,32 @@ public class EmployeeController {
     model.addAttribute("confirmView", confirmView);
 
     return "employee/confirm";
+    }
+    @PostMapping
+    public String createEmployee(@ModelAttribute EmployeeForm employeeForm) {
+
+        // ① employee保存
+        Employee employee = new Employee();
+        employee.setLastName(employeeForm.getLastName());
+        employee.setFirstName(employeeForm.getFirstName());
+        employee.setBirthDate(employeeForm.getBirthDate());
+        employee.setHireDate(employeeForm.getHireDate());
+        employee.setCreatedAt(LocalDateTime.now());
+        employee.setUpdatedAt(LocalDateTime.now());
+
+        employeeRepository.save(employee);
+
+        // ② 部門履歴保存
+        EmployeeDepartmentHistory history = new EmployeeDepartmentHistory();
+        history.setEmployeeId(employee.getId());
+        history.setDepartmentId(employeeForm.getDepartmentId());
+        history.setStartDate(employeeForm.getHireDate());
+        history.setCreatedAt(LocalDateTime.now());
+        history.setUpdatedAt(LocalDateTime.now());
+
+        employeeDepartmentHistoryRepository.save(history);
+
+        // ③ 一覧へ戻る
+        return "redirect:/employees";
     }
 }

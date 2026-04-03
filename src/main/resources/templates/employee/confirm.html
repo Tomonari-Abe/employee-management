@@ -58,6 +58,15 @@
     </div>
 
     <button type="button" onclick="history.back()">戻る</button>
-    <button type="button">登録</button>
+
+    <form th:action="@{/employees}" method="post" style="display:inline;">
+        <input type="hidden" name="lastName" th:value="${confirmView.lastName}">
+        <input type="hidden" name="firstName" th:value="${confirmView.firstName}">
+        <input type="hidden" name="birthDate" th:value="${confirmView.birthDate}">
+        <input type="hidden" name="hireDate" th:value="${confirmView.hireDate}">
+        <input type="hidden" name="departmentId" th:value="${confirmView.departmentId}">
+
+        <button type="submit">登録</button>
+    </form>
 </body>
 </html>

@@ -26,6 +26,10 @@ import java.time.LocalDateTime;
 import com.example.employeemanagement.entity.Employee;
 import com.example.employeemanagement.entity.EmployeeDepartmentHistory;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import com.example.employeemanagement.dto.EmployeeConfirmView;
+
 
 
 @Controller
@@ -183,5 +187,31 @@ public class EmployeeController {
         model.addAttribute("confirmView", confirmView);
 
         return "employee/edit-confirm";
+    }
+    @PostMapping("/update")
+    public String updateEmployee(@ModelAttribute EmployeeConfirmView confirmView) {
+
+        Employee employee = employeeRepository
+                .findById(confirmView.getId())
+                .orElseThrow();
+
+        employee.setLastName(confirmView.getLastName());
+        employee.setFirstName(confirmView.getFirstName());
+        employee.setBirthDate(confirmView.getBirthDate());
+        employee.setHireDate(confirmView.getHireDate());
+        employee.setUpdatedAt(LocalDateTime.now());
+
+        employeeRepository.save(employee);
+
+        EmployeeDepartmentHistory history = new EmployeeDepartmentHistory();
+        history.setEmployeeId(confirmView.getId());
+        history.setDepartmentId(confirmView.getDepartmentId());
+        history.setStartDate(confirmView.getHireDate());
+        history.setCreatedAt(LocalDateTime.now());
+        history.setUpdatedAt(LocalDateTime.now());
+
+        employeeDepartmentHistoryRepository.save(history);
+
+        return "redirect:/employees";
     }
 }

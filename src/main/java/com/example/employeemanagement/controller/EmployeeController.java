@@ -20,11 +20,12 @@ import com.example.employeemanagement.dto.EmployeeForm;
 import com.example.employeemanagement.entity.Department;
 import com.example.employeemanagement.dto.EmployeeConfirmView;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import java.time.LocalDateTime;
 import com.example.employeemanagement.entity.Employee;
 import com.example.employeemanagement.entity.EmployeeDepartmentHistory;
-
+import org.springframework.ui.Model;
 
 
 @Controller
@@ -134,5 +135,53 @@ public class EmployeeController {
 
         // ③ 一覧へ戻る
         return "redirect:/employees";
+    }
+    @GetMapping("/{id}/edit")
+        public String showEdit(@PathVariable Long id, Model model) {
+
+        Employee employee = employeeRepository.findById(id).orElseThrow();
+
+        EmployeeForm employeeForm = new EmployeeForm();
+        employeeForm.setId(employee.getId());
+        employeeForm.setLastName(employee.getLastName());
+        employeeForm.setFirstName(employee.getFirstName());
+        employeeForm.setBirthDate(employee.getBirthDate());
+        employeeForm.setHireDate(employee.getHireDate());
+
+        EmployeeDepartmentHistory history = employeeDepartmentHistoryRepository
+                .findTopByEmployeeIdOrderByStartDateDescUpdatedAtDesc(id)
+                .orElse(null);
+
+        if (history != null) {
+            employeeForm.setDepartmentId(history.getDepartmentId());
+        }
+
+        List<Department> departments = departmentRepository.findAll();
+
+        model.addAttribute("employeeForm", employeeForm);
+        model.addAttribute("departments", departments);
+
+        return "employee/edit";
+        }
+    @PostMapping("/edit/confirm")
+    public String confirmEdit(@ModelAttribute EmployeeForm employeeForm, Model model) {
+        EmployeeConfirmView confirmView = new EmployeeConfirmView();
+        confirmView.setId(employeeForm.getId());
+        confirmView.setLastName(employeeForm.getLastName());
+        confirmView.setFirstName(employeeForm.getFirstName());
+        confirmView.setBirthDate(employeeForm.getBirthDate());
+        confirmView.setHireDate(employeeForm.getHireDate());
+        confirmView.setDepartmentId(employeeForm.getDepartmentId());
+
+        String departmentName = "";
+        if (employeeForm.getDepartmentId() != null) {
+            Department department = departmentRepository.findById(employeeForm.getDepartmentId()).orElseThrow();
+            departmentName = department.getDepartmentName();
+        }
+        confirmView.setDepartmentName(departmentName);
+
+        model.addAttribute("confirmView", confirmView);
+
+        return "employee/edit-confirm";
     }
 }

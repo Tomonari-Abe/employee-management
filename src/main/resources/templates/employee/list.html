@@ -54,7 +54,9 @@
         <td th:text="${employee.hireDate}">入社日</td>
         <td th:text="${employee.departmentName}">所属部門</td>
         <td th:text="${employee.retirementDate != null ? employee.retirementDate : '-'}">退社日</td>
-        <td><button>編集</button></td>
+        <td>
+            <a th:href="@{/employees/{id}/edit(id=${employee.id})}" class="btn">編集</a>
+        </td>
     </tr>
 </tbody>
     </table>
